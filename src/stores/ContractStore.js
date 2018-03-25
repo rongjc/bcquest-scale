@@ -1,7 +1,7 @@
 import { observable, action, decorate } from 'mobx';
 import autosave from './autosave';
 
-class ContractStore {
+export default class ContractStore {
   name;
   token;
   crowdsale;
@@ -49,5 +49,3 @@ decorate(ContractStore, {
   setContractType: action,
   setContractProperty: action
 });
-
-export default ContractStore;

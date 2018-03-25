@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
+import { Panel } from 'react-bootstrap';
 
 export default class CrowdSalePage extends Component {
   constructor(props) {
@@ -7,7 +8,11 @@ export default class CrowdSalePage extends Component {
     console.log(this.props);
   }
   render() {
-    return <div>CrowdSalePage</div>;
+    return (
+      <Panel>
+        <Panel.Body>Basic panel example</Panel.Body>
+      </Panel>
+    );
   }
 }
 

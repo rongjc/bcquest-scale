@@ -144,7 +144,6 @@ decorate(DeploymentStore, {
   setDeploymentStep: action,
   resetDeploymentStep: action,
   setHasEnded: action,
-  setHasEnded: action,
   deploymentHasFinished: computed,
   nextPendingTransaction: computed
 });

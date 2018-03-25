@@ -504,3 +504,9 @@ export const TX_STEP_DESCRIPTION = {
   setReleaseAgent: 'Register Token release addresses',
   transferOwnership: 'Transfer ownership to wallet address'
 };
+
+export const DOWNLOAD_STATUS = {
+  PENDING: 'pending',
+  SUCCESS: 'success',
+  FAILURE: 'failure'
+};

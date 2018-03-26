@@ -7,10 +7,9 @@ export default function autosave(store, storageKey, deserialize = x => x) {
   mobx.autorun(() => {
     if (firstRun) {
       const existingStore = storage.get(storageKey);
-
       if (existingStore) {
         //mobx.extendObservable(store, deserialize(existingStore), {});
-        mobx.set(store, deserialize(existingStore), {});
+        mobx.set(store, deserialize(existingStore));
       }
 
       firstRun = false;

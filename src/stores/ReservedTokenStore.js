@@ -6,7 +6,6 @@ export default class ReservedTokenStore {
 
   constructor(tokens = []) {
     this.tokens = tokens;
-
     autosave(this, 'ReservedTokenStore');
   }
 

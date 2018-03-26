@@ -93,6 +93,8 @@ export const validateTicker = ticker => /^[a-z0-9]{1,5}$/i.test(ticker);
 
 export const validateTime = time => getTimeAsNumber(time) > Date.now();
 
+export const validateDecimals = decimals => decimals <= 18 && decimals > 0;
+
 export const validateLaterTime = (laterTime, previousTime) =>
   getTimeAsNumber(laterTime) > getTimeAsNumber(previousTime);
 

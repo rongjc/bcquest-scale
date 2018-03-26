@@ -19,7 +19,7 @@ if (
   storage.has('DeploymentStore') &&
   storage.get('DeploymentStore').deploymentStep === null
 ) {
-  localStorage.clear();
+  // localStorage.clear();
 }
 
 const generalStore = new GeneralStore();

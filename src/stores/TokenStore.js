@@ -1,5 +1,5 @@
 import { observable, action, computed, decorate } from 'mobx';
-import { validateName, validateTicker } from '../utils/utils';
+import { validateName, validateTicker, validateDecimals } from '../utils/utils';
 import { VALIDATION_TYPES } from '../utils/constants';
 import autosave from './autosave';
 const { EMPTY, VALID, INVALID } = VALIDATION_TYPES;
@@ -41,6 +41,10 @@ class TokenStore {
       this.validToken[property] = validateName(this.name) ? VALID : INVALID;
     } else if (property === 'ticker') {
       this.validToken[property] = validateTicker(this.ticker) ? VALID : INVALID;
+    } else if (property === 'decimals') {
+      this.validToken[property] = validateDecimals(this.decimals)
+        ? VALID
+        : INVALID;
     }
   };
 

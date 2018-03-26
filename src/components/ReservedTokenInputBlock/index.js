@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-import Web3 from 'web3';
 import Web3Utils from 'web3-utils';
-import { TEXT_FIELDS, VALIDATION_TYPES } from '../../utils/constants';
 import { Panel, Table, Button } from 'react-bootstrap';
 import RegexInput from '../RegexInput';
-import { inject, observer } from 'mobx-react';
-const { VALID, INVALID } = VALIDATION_TYPES;
-const { ADDRESS, DIMENSION, VALUE } = TEXT_FIELDS;
+import { observer } from 'mobx-react';
 
 export default observer(
   class ReservedTokensInputBlock extends Component {

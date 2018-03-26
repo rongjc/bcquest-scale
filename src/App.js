@@ -5,8 +5,9 @@ import './App.css';
 import { Provider } from 'mobx-react';
 import SideNav, { Nav, NavIcon, NavText } from 'react-sidenav';
 
-import CrowdsalePage from './components/CrowdsaleSetup';
-import TokenPage from './components/TokenSetup';
+import ContractSetup from './components/ContractSetup';
+import TokenSetup from './components/TokenSetup';
+import CrowdsaleSetup from './components/CrowdsaleSetup';
 
 // read ../../stores/index.js for configuration
 import * as stores from './stores';
@@ -17,8 +18,9 @@ class App extends Component {
       <Provider {...stores}>
         <Router>
           <div className="App">
-            <Route path="/crowdsalePage" component={CrowdsalePage} />
-            <Route path="/token" component={TokenPage} />
+            <Route path="/contract" component={ContractSetup} />
+            <Route path="/token" component={TokenSetup} />
+            <Route path="/crowdsale" component={CrowdsaleSetup} />
           </div>
         </Router>
       </Provider>

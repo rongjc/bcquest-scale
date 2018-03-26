@@ -5,151 +5,112 @@ import {
   FormGroup,
   ControlLabel,
   Radio,
+  ButtonToolbar,
   Button,
   Alert
 } from 'react-bootstrap';
 
-import { setFlatFileContentToState } from '../../utils/utils';
 import { checkWeb3 } from '../../utils/blockchainHelpers';
-
-import { DOWNLOAD_STATUS, CONTRACT_TYPES } from '../../utils/constants';
-
-export default inject('contractStore', 'web3Store')(
+import RegexInput from '../RegexInput';
+import TierSetup from '../TierSetup';
+export default inject(
+  'contractStore',
+  'crowdsaleBlockListStore',
+  'pricingStrategyStore',
+  'web3Store',
+  'tierStore',
+  'generalStore',
+  'gasPriceStore',
+  'reservedTokenStore',
+  'deploymentStore',
+  'tokenStore'
+)(
   observer(
-    class CrowdSaleSetup extends Component {
+    class CrowdsaleSetup extends Component {
       constructor(props) {
         super(props);
-        this.render = this.render.bind(this);
-
+        const {
+          contractStore,
+          crowdsaleBlockListStore,
+          tierStore,
+          gasPriceStore
+        } = props;
+        this.handleChange = this.handleChange.bind(this);
         this.state = {
-          contractsDownloaded: DOWNLOAD_STATUS.PENDING,
+          addr: '',
+          min: '0',
+          gasPriceSelected: gasPriceStore.slow.id,
           isError: false,
           isLoading: true
         };
       }
-      getStandardCrowdsaleAssets() {
-        return Promise.all([
-          this.getCrowdsaleAsset('CrowdsaleStandard', 'crowdsale'),
-          this.getCrowdsaleAsset('CrowdsaleStandardToken', 'token')
-        ]);
-      }
-
-      getWhiteListWithCapCrowdsaleAssets() {
-        return Promise.all([
-          this.getCrowdsaleAsset('SafeMathLibExt', 'safeMathLib'),
-          this.getCrowdsaleAsset('CrowdsaleWhiteListWithCap', 'crowdsale'),
-          this.getCrowdsaleAsset('CrowdsaleWhiteListWithCapToken', 'token'),
-          this.getCrowdsaleAsset(
-            'CrowdsaleWhiteListWithCapPricingStrategy',
-            'pricingStrategy'
-          ),
-          this.getCrowdsaleAsset(
-            'CrowdsaleWhiteListWithCapPricingStrategy',
-            'pricingStrategy'
-          ),
-          this.getCrowdsaleAsset('FinalizeAgent', 'finalizeAgent'),
-          this.getCrowdsaleAsset('NullFinalizeAgent', 'nullFinalizeAgent'),
-          this.getCrowdsaleAsset('Registry', 'registry')
-        ]);
-      }
-
-      getCrowdsaleAsset(contractName, stateProp) {
-        const src = setFlatFileContentToState(
-          `/contracts/${contractName}_flat.sol`
-        );
-        const bin = setFlatFileContentToState(
-          `/contracts/${contractName}_flat.bin`
-        );
-        const abi = setFlatFileContentToState(
-          `/contracts/${contractName}_flat.abi`
-        );
-
-        return Promise.all([src, bin, abi]).then(result =>
-          this.addContractsToState(...result, stateProp)
-        );
-      }
       componentDidMount() {
-        checkWeb3();
-        let downloadContracts = null;
+        const { tierStore, web3Store, gasPriceStore } = this.props;
+        const { curAddress } = web3Store;
 
-        switch (this.props.contractStore.contractType) {
-          case CONTRACT_TYPES.standard:
-            downloadContracts = this.getStandardCrowdsaleAssets();
-            break;
-          case CONTRACT_TYPES.whitelistwithcap:
-            downloadContracts = this.getWhiteListWithCapCrowdsaleAssets();
-            break;
-          default:
-            break;
-        }
-        downloadContracts = this.getWhiteListWithCapCrowdsaleAssets();
-        downloadContracts.then(
-          () => {
-            this.setState({
-              contractsDownloaded: DOWNLOAD_STATUS.SUCCESS,
-              isLoading: false
-            });
-          },
-          e => {
-            console.error('Error downloading contracts', e);
-            this.setState({
-              contractsDownloaded: DOWNLOAD_STATUS.FAILURE,
-              isError: true
-            });
-          }
-        );
+        gasPriceStore
+          .updateValues()
+          .then(() =>
+            this.setState({ gasPriceSelected: gasPriceStore.slow.id })
+          )
+          .catch(() => console.log('NO Gas'))
+          .then(() => this.setState({ loading: false }));
       }
-      addContractsToState(src, bin, abi, contract) {
-        this.props.contractStore.setContract(contract, {
-          src,
-          bin,
-          abi: JSON.parse(abi),
-          addr:
-            contract === 'crowdsale' ||
-            contract === 'pricingStrategy' ||
-            contract === 'finalizeAgent'
-              ? []
-              : '',
-          abiConstructor:
-            contract === 'crowdsale' ||
-            contract === 'pricingStrategy' ||
-            contract === 'finalizeAgent'
-              ? []
-              : ''
-        });
+
+      handleChange(e) {
+        this.setState({ [e.id]: e.value }, () => {});
       }
       render() {
-        const { isLoading, isError } = this.state;
+        const state = this.state;
+        const gasPriceStore = this.props.gasPriceStore;
         return (
           <div>
-            {isError ? (
-              <Alert bsStyle="danger" onDismiss={this.handleDismiss}>
-                <h4>Error loading contract template</h4>
-                <p>Error loading contract template, please retry</p>
-              </Alert>
-            ) : (
-              ''
-            )}
             <Panel>
+              <Panel.Heading>Global Setting</Panel.Heading>
               <Panel.Body>
                 <form>
+                  <RegexInput
+                    id="addr"
+                    title="Wallet Address"
+                    value={state.addr}
+                    type="text"
+                    regex="^(0x)?[0-9a-fA-Z]{40}$"
+                    help="Where the money goes after investors transactions. Immediately after each transaction. We recommend to setup a multisig wallet with hardware based signers."
+                    onValueUpdate={this.handleChange}
+                  />
                   <FormGroup>
-                    <ControlLabel>Choose your crowdsale type</ControlLabel>
-                    <Radio checked readOnly>
-                      Whitelist with Cap
+                    <ControlLabel>Gas Price:</ControlLabel>
+                    <Radio name="gas">{gasPriceStore.slowDescription}</Radio>
+                    <Radio name="gas">
+                      {gasPriceStore.standardDescription}
                     </Radio>
-                    <Button bsStyle="primary" disabled={isLoading}>
-                      {isLoading ? 'Loading template...' : 'Continue'}
-                    </Button>
+                    <Radio name="gas">{gasPriceStore.fastDescription}</Radio>
+                  </FormGroup>
+                  <RegexInput
+                    id="min"
+                    title="INVESTOR MIN CAP"
+                    value={state.min}
+                    type="number"
+                    regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
+                    help="Minimum amount tokens to buy. Not a minimal size of a transaction. If minCap is 1 and user bought 1 token in a previous transaction and buying 0.1 token it will allow him to buy."
+                    onValueUpdate={this.handleChange}
+                  />
+                  <FormGroup>
+                    <ControlLabel>whitelisting:</ControlLabel>
+                    <Radio name="whitelisting">Yes</Radio>
+                    <Radio name="whitelisting">No</Radio>
                   </FormGroup>
                 </form>
               </Panel.Body>
             </Panel>
+            <TierSetup />
+            <ButtonToolbar>
+              <Button bsStyle="primary">Add Tier</Button>
+              <Button bsStyle="primary">Continue</Button>
+            </ButtonToolbar>
           </div>
         );
       }
     }
   )
 );
-
-// inject("contractStore", "web3Store")(observer(CrowdSalePage));

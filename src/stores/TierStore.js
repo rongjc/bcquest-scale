@@ -232,26 +232,22 @@ export default class TierStore {
   addWhitelistItem = ({ addr, min, max }, crowdsaleNum) => {
     const tier = this.tiers[crowdsaleNum];
 
-    const whitelist = tier.whitelist.slice();
+    const whitelist = tier.whitelist;
 
-    const isAdded = whitelist.find(item => item.addr === addr && !item.deleted);
+    const whitelistElements = tier.whitelistElements;
 
-    if (isAdded) return;
-
-    const whitelistElements = tier.whitelistElements.slice();
     const whitelistNum = whitelistElements.length;
 
     whitelistElements.push({ addr, min, max, whitelistNum, crowdsaleNum });
     whitelist.push({ addr, min, max });
-
-    this.setTierProperty(whitelistElements, 'whitelistElements', crowdsaleNum);
-    this.setTierProperty(whitelist, 'whitelist', crowdsaleNum);
   };
 
   removeWhitelistItem = (whitelistNum, crowdsaleNum) => {
-    let whitelist = this.tiers[crowdsaleNum].whitelist.slice();
-    whitelist[whitelistNum].deleted = true;
-    this.setTierProperty(whitelist, 'whitelist', crowdsaleNum);
+    let whitelist = this.tiers[crowdsaleNum].whitelist;
+    let whitelistElements = this.tiers[crowdsaleNum].whitelistElements;
+
+    whitelist = whitelist.splice(whitelistNum, 1);
+    whitelistElements = whitelistElements.splice(whitelistNum, 1);
   };
 
   get maxSupply() {

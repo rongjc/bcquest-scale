@@ -5,8 +5,8 @@ import './App.css';
 import { Provider } from 'mobx-react';
 import SideNav, { Nav, NavIcon, NavText } from 'react-sidenav';
 
-import CrowdsalePage from './components/CrowdsalePage';
-import TokenPage from './components/TokenPage';
+import CrowdsalePage from './components/CrowdsaleSetup';
+import TokenPage from './components/TokenSetup';
 
 // read ../../stores/index.js for configuration
 import * as stores from './stores';

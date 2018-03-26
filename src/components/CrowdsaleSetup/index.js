@@ -16,7 +16,7 @@ import { DOWNLOAD_STATUS, CONTRACT_TYPES } from '../../utils/constants';
 
 export default inject('contractStore', 'web3Store')(
   observer(
-    class CrowdSalePage extends Component {
+    class CrowdSaleSetup extends Component {
       constructor(props) {
         super(props);
         this.render = this.render.bind(this);

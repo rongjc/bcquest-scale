@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
+import moment from 'moment';
 import {
   Panel,
   FormGroup,
@@ -9,7 +10,12 @@ import {
   Button,
   Alert
 } from 'react-bootstrap';
-
+import {
+  defaultCompanyStartDate,
+  defaultCompanyEndDate,
+  gweiToWei,
+  weiToGwei
+} from '../../utils/utils';
 import { checkWeb3 } from '../../utils/blockchainHelpers';
 import RegexInput from '../RegexInput';
 import WhitelistInputBlock from '../WhitelistInputBlock';
@@ -37,6 +43,7 @@ export default inject(
           gasPriceStore
         } = props;
         this.handleChange = this.handleChange.bind(this);
+        this.removeTier = this.removeTier.bind(this);
         this.state = {
           addr: '',
           min: '0',
@@ -44,16 +51,37 @@ export default inject(
           isError: false,
           isLoading: true
         };
+        const num = parseInt(props.num);
+        if (num === 0) {
+          tierStore.setTierProperty(defaultCompanyStartDate(), 'startTime', 0);
+        } else {
+          tierStore.setTierProperty(
+            tierStore.tiers[num - 1].endTime,
+            'startTime',
+            num
+          );
+        }
+        tierStore.setTierProperty(
+          defaultCompanyEndDate(tierStore.tiers[num].startTime),
+          'endTime',
+          num
+        );
       }
       componentDidMount() {}
-
+      removeTier(e, index) {
+        this.props.removeTier(index);
+      }
       handleChange(e) {
         this.setState({ [e.id]: e.value }, () => {});
       }
       render() {
         const state = this.state;
         const props = this.props;
+        const { tierStore } = this.props;
+        const { tiers } = tierStore;
         const gasPriceStore = this.props.gasPriceStore;
+        const num = parseInt(props.num);
+
         return (
           <div>
             <Panel>
@@ -63,16 +91,16 @@ export default inject(
                   <RegexInput
                     id="name"
                     title="Name"
-                    value="Name"
+                    value={tiers[num].tier}
                     type="text"
-                    regex="^(0x)?[0-9a-fA-Z]{40}$"
+                    regex="^[0-9a-fA-Z]*"
                     help="Name of a tier, e.g. PrePreCrowdsale, PreCrowdsale, Crowdsale with bonus A, Crowdsale with bonus B, etc. We simplified that and will increment a number after each tier."
                     onValueUpdate={this.handleChange}
                   />
                   <RegexInput
                     id="startTime"
                     title="START TIME"
-                    value="Start Tiem"
+                    value={tiers[num].startTime}
                     type="text"
                     regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
                     help="
@@ -82,7 +110,7 @@ export default inject(
                   <RegexInput
                     id="endTime"
                     title="END TIME"
-                    value="End Tiem"
+                    value={tiers[num].endTime}
                     type="text"
                     regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
                     help="
@@ -109,12 +137,23 @@ export default inject(
                     onValueUpdate={this.handleChange}
                   />
                 </form>
+                {tierStore.tiers[0].whitelistEnabled === 'yes' ? (
+                  <WhitelistInputBlock
+                    data={props.tierStore.tiers[num].whitelistElements}
+                    num={num}
+                  />
+                ) : (
+                  ''
+                )}
+                {/* {props.removable ? (
+                  <Button bsStyle="primary" onClick={this.removeTier.bind(num)}>
+                    Remove Tier
+                  </Button>
+                ) : (
+                  ""
+                )} */}
               </Panel.Body>
             </Panel>
-            <WhitelistInputBlock
-              data={props.tierStore.tiers[0].whitelistElements}
-              num="0"
-            />
           </div>
         );
       }

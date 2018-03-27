@@ -13,6 +13,13 @@ import {
 import { checkWeb3 } from '../../utils/blockchainHelpers';
 import RegexInput from '../RegexInput';
 import TierSetup from '../TierSetup';
+
+export const VALIDATION_TYPES = {
+  VALID: 'VALIDATED',
+  EMPTY: 'EMPTY',
+  INVALID: 'INVALID'
+};
+const { EMPTY, VALID, INVALID } = VALIDATION_TYPES;
 export default inject(
   'contractStore',
   'crowdsaleBlockListStore',
@@ -35,18 +42,41 @@ export default inject(
           tierStore,
           gasPriceStore
         } = props;
+
         this.handleChange = this.handleChange.bind(this);
+        this.updateWhitelistEnabled = this.updateWhitelistEnabled.bind(this);
+        this.removeTier = this.removeTier.bind(this);
+
+        tierStore.emptyList();
+        crowdsaleBlockListStore.emptyList();
+
+        tierStore.setTierProperty('Tier 1', 'tier', 0);
+        tierStore.setTierProperty('off', 'updatable', 0);
+        tierStore.setTierProperty('no', 'whitelistEnabled', 0);
         this.state = {
           addr: '',
-          min: '0',
+          minCap: '0',
           gasPriceSelected: gasPriceStore.slow.id,
           isError: false,
           isLoading: true
         };
       }
+      updateTierStore = (event, property, index) => {
+        const { tierStore } = this.props;
+        const value = event.target.value;
+        tierStore.setTierProperty(value, property, index);
+        tierStore.validateTiers(property, index);
+      };
+
+      updateWhitelistEnabled = e => {
+        this.props.tierStore.setGlobalMinCap('');
+        this.updateTierStore(e, 'whitelistEnabled', 0);
+      };
       componentDidMount() {
         const { tierStore, web3Store, gasPriceStore } = this.props;
         const { curAddress } = web3Store;
+
+        tierStore.setTierProperty(curAddress, 'walletAddress', 0);
 
         gasPriceStore
           .updateValues()
@@ -57,12 +87,56 @@ export default inject(
           .then(() => this.setState({ loading: false }));
       }
 
+      addCrowdsale() {
+        const { crowdsaleBlockListStore, tierStore } = this.props;
+        let num = crowdsaleBlockListStore.blockList.length + 1;
+        const newTier = {
+          tier: 'Tier ' + (num + 1),
+          supply: 0,
+          rate: 0,
+          updatable: 'off',
+          whitelist: [],
+          whitelistElements: []
+        };
+        const newTierValidations = {
+          tier: VALID,
+          startTime: VALID,
+          endTime: VALID,
+          supply: EMPTY,
+          rate: EMPTY
+        };
+
+        tierStore.addTier(newTier);
+        tierStore.addTierValidations(newTierValidations);
+
+        this.addCrowdsaleBlock(num);
+      }
+      removeTier(index) {
+        this.props.crowdsaleBlockListStore.removeCrowdsaleItem(index);
+        this.props.tierStore.removeTier(index);
+      }
+      addCrowdsaleBlock(num) {
+        this.props.crowdsaleBlockListStore.addCrowdsaleItem(
+          <TierSetup
+            num={num}
+            key={num}
+            removable={true}
+            removeTier={this.removeTier}
+          />
+        );
+      }
+
       handleChange(e) {
         this.setState({ [e.id]: e.value }, () => {});
       }
       render() {
         const state = this.state;
         const gasPriceStore = this.props.gasPriceStore;
+        const {
+          contractStore,
+          crowdsaleBlockListStore,
+          tierStore
+        } = this.props;
         return (
           <div>
             <Panel>
@@ -89,23 +163,43 @@ export default inject(
                   <RegexInput
                     id="min"
                     title="INVESTOR MIN CAP"
-                    value={state.min}
+                    value={state.minCap}
                     type="number"
+                    disabled={tierStore.tiers[0].whitelistEnabled === 'yes'}
                     regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
                     help="Minimum amount tokens to buy. Not a minimal size of a transaction. If minCap is 1 and user bought 1 token in a previous transaction and buying 0.1 token it will allow him to buy."
                     onValueUpdate={this.handleChange}
                   />
-                  <FormGroup>
+                  <FormGroup onChange={e => this.updateWhitelistEnabled(e)}>
                     <ControlLabel>whitelisting:</ControlLabel>
-                    <Radio name="whitelisting">Yes</Radio>
-                    <Radio name="whitelisting">No</Radio>
+                    <Radio
+                      name="whitelisting"
+                      value="yes"
+                      checked={
+                        this.props.tierStore.tiers[0].whitelistEnabled === 'yes'
+                      }
+                    >
+                      Yes
+                    </Radio>
+                    <Radio
+                      name="whitelisting"
+                      value="no"
+                      checked={
+                        this.props.tierStore.tiers[0].whitelistEnabled === 'no'
+                      }
+                    >
+                      No
+                    </Radio>
                   </FormGroup>
                 </form>
               </Panel.Body>
             </Panel>
-            <TierSetup />
+            <TierSetup key="0" num="0" />
+            <div>{crowdsaleBlockListStore.blockList}</div>
             <ButtonToolbar>
-              <Button bsStyle="primary">Add Tier</Button>
+              <Button bsStyle="primary" onClick={() => this.addCrowdsale()}>
+                Add Tier
+              </Button>
               <Button bsStyle="primary">Continue</Button>
             </ButtonToolbar>
           </div>

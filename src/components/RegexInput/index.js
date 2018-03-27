@@ -47,6 +47,7 @@ export default observer(
               type={props.type}
               onChange={this.handleChange}
               value={props.value}
+              disabled={props.disabled}
             />
             <FormControl.Feedback />
             <HelpBlock>{props.help}</HelpBlock>

@@ -1,4 +1,4 @@
-import { observable, action, decorate } from 'mobx';
+import { observable, action, decorate, computed } from 'mobx';
 import autosave from './autosave';
 
 export default class CrowdsaleBlockListStore {

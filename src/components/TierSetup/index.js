@@ -44,14 +44,8 @@ export default inject(
         } = props;
         this.handleChange = this.handleChange.bind(this);
         this.removeTier = this.removeTier.bind(this);
-        this.state = {
-          addr: '',
-          min: '0',
-          gasPriceSelected: gasPriceStore.slow.id,
-          isError: false,
-          isLoading: true
-        };
         const num = parseInt(props.num);
+
         if (num === 0) {
           tierStore.setTierProperty(defaultCompanyStartDate(), 'startTime', 0);
         } else {
@@ -66,6 +60,17 @@ export default inject(
           'endTime',
           num
         );
+
+        this.state = {
+          name: tierStore.tiers[num].tier,
+          startTime: tierStore.tiers[num].startTime,
+          endTime: tierStore.tiers[num].endTime,
+          rate: '0',
+          supply: '0',
+          gasPriceSelected: gasPriceStore.slow.id,
+          isError: false,
+          isLoading: true
+        };
       }
       componentDidMount() {}
       removeTier(e, index) {
@@ -73,6 +78,9 @@ export default inject(
       }
       handleChange(e) {
         this.setState({ [e.id]: e.value }, () => {});
+        const num = parseInt(this.props.num);
+        const tierStore = this.props.tierStore;
+        tierStore.setTierProperty(e.value, e.id, num);
       }
       render() {
         const state = this.state;
@@ -91,7 +99,7 @@ export default inject(
                   <RegexInput
                     id="name"
                     title="Name"
-                    value={tiers[num].tier}
+                    value={state.name}
                     type="text"
                     regex="^[0-9a-fA-Z]*"
                     help="Name of a tier, e.g. PrePreCrowdsale, PreCrowdsale, Crowdsale with bonus A, Crowdsale with bonus B, etc. We simplified that and will increment a number after each tier."
@@ -100,7 +108,7 @@ export default inject(
                   <RegexInput
                     id="startTime"
                     title="START TIME"
-                    value={tiers[num].startTime}
+                    value={state.startTime}
                     type="text"
                     regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
                     help="
@@ -110,7 +118,7 @@ export default inject(
                   <RegexInput
                     id="endTime"
                     title="END TIME"
-                    value={tiers[num].endTime}
+                    value={state.endTime}
                     type="text"
                     regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
                     help="
@@ -120,7 +128,7 @@ export default inject(
                   <RegexInput
                     id="rate"
                     title="Rate"
-                    value="Rate"
+                    value={state.rate}
                     type="number"
                     regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
                     help="
@@ -130,7 +138,7 @@ export default inject(
                   <RegexInput
                     id="supply"
                     title="Supply"
-                    value="Supply"
+                    value={state.supply}
                     type="number"
                     regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
                     help="How many tokens will be sold on this tier. Cap of crowdsale equals to sum of supply of all tiers"

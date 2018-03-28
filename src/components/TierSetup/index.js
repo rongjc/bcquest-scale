@@ -10,12 +10,7 @@ import {
   Button,
   Alert
 } from 'react-bootstrap';
-import {
-  defaultCompanyStartDate,
-  defaultCompanyEndDate,
-  gweiToWei,
-  weiToGwei
-} from '../../utils/utils';
+import { gweiToWei, weiToGwei } from '../../utils/utils';
 import { checkWeb3 } from '../../utils/blockchainHelpers';
 import RegexInput from '../RegexInput';
 import WhitelistInputBlock from '../WhitelistInputBlock';
@@ -36,60 +31,53 @@ export default inject(
     class TierSetup extends Component {
       constructor(props) {
         super(props);
-        const {
-          contractStore,
-          crowdsaleBlockListStore,
-          tierStore,
-          gasPriceStore
-        } = props;
+        const { tierStore, gasPriceStore } = props;
         this.handleChange = this.handleChange.bind(this);
         this.removeTier = this.removeTier.bind(this);
-        const num = parseInt(props.num);
-
-        if (num === 0) {
-          tierStore.setTierProperty(defaultCompanyStartDate(), 'startTime', 0);
-        } else {
-          tierStore.setTierProperty(
-            tierStore.tiers[num - 1].endTime,
-            'startTime',
-            num
-          );
-        }
-        tierStore.setTierProperty(
-          defaultCompanyEndDate(tierStore.tiers[num].startTime),
-          'endTime',
-          num
-        );
+        const num = parseInt(props.num, 10);
 
         this.state = {
           name: tierStore.tiers[num].tier,
           startTime: tierStore.tiers[num].startTime,
           endTime: tierStore.tiers[num].endTime,
-          rate: '0',
-          supply: '0',
+          rate: tierStore.tiers[num].rate,
+          supply: tierStore.tiers[num].supply,
           gasPriceSelected: gasPriceStore.slow.id,
           isError: false,
           isLoading: true
         };
       }
       componentDidMount() {}
-      removeTier(e, index) {
+      removeTier(index, e) {
+        console.log(index);
         this.props.removeTier(index);
       }
       handleChange(e) {
         this.setState({ [e.id]: e.value }, () => {});
-        const num = parseInt(this.props.num);
+        const num = parseInt(this.props.num, 10);
         const tierStore = this.props.tierStore;
         tierStore.setTierProperty(e.value, e.id, num);
       }
+      componentWillReceiveProps(newProps) {
+        const num = parseInt(newProps.num, 10);
+        const { tierStore, gasPriceStore } = newProps;
+        this.setState({
+          name: tierStore.tiers[num].tier,
+          startTime: tierStore.tiers[num].startTime,
+          endTime: tierStore.tiers[num].endTime,
+          rate: tierStore.tiers[num].rate,
+          supply: tierStore.tiers[num].supply,
+          gasPriceSelected: gasPriceStore.slow.id,
+          isError: false,
+          isLoading: true
+        });
+      }
+
       render() {
         const state = this.state;
         const props = this.props;
         const { tierStore } = this.props;
-        const { tiers } = tierStore;
-        const gasPriceStore = this.props.gasPriceStore;
-        const num = parseInt(props.num);
-
+        const num = parseInt(props.num, 10);
         return (
           <div>
             <Panel>
@@ -153,13 +141,16 @@ export default inject(
                 ) : (
                   ''
                 )}
-                {/* {props.removable ? (
-                  <Button bsStyle="primary" onClick={this.removeTier.bind(num)}>
+                {props.removable ? (
+                  <Button
+                    bsStyle="primary"
+                    onClick={this.removeTier.bind(this, num)}
+                  >
                     Remove Tier
                   </Button>
                 ) : (
-                  ""
-                )} */}
+                  ''
+                )}
               </Panel.Body>
             </Panel>
           </div>

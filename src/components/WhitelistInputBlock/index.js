@@ -22,7 +22,6 @@ export default inject('tierStore')(
           min: '',
           max: ''
         };
-        console.log(props.data);
       }
       handleChange(e) {
         this.setState({ [e.id]: e.value }, () => {

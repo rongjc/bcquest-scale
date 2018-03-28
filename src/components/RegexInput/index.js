@@ -15,25 +15,31 @@ export default observer(
       this.validateValue = this.validateValue.bind(this);
       this.state = {
         id: props.id,
-        value: props.value,
+        val: props.value,
         error: this.validateValue(props.value)
       };
     }
     handleChange(e) {
-      this.setState(
-        { value: e.target.value, error: this.validateValue(e.target.value) },
-        () => {
-          this.props.onValueUpdate(this.state);
-        }
-      );
+      this.props.onValueUpdate({
+        id: this.state.id,
+        value: e.target.value,
+        error: this.validateValue(e.target.value)
+      });
     }
     validateValue(value) {
       var regex = new RegExp(this.props.regex);
-      if (value.match(regex)) {
+      if (String(value).match(regex)) {
         return 'success';
       } else {
         return 'error';
       }
+    }
+    componentWillReceiveProps(newProps) {
+      this.setState({
+        id: newProps.id,
+        val: newProps.value,
+        error: this.validateValue(newProps.value)
+      });
     }
 
     render() {
@@ -46,7 +52,7 @@ export default observer(
             <FormControl
               type={props.type}
               onChange={this.handleChange}
-              value={props.value}
+              value={state.val}
               disabled={props.disabled}
             />
             <FormControl.Feedback />

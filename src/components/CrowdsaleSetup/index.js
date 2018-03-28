@@ -9,7 +9,10 @@ import {
   Button,
   Alert
 } from 'react-bootstrap';
-
+import {
+  defaultCompanyStartDate,
+  defaultCompanyEndDate
+} from '../../utils/utils';
 import { checkWeb3 } from '../../utils/blockchainHelpers';
 import RegexInput from '../RegexInput';
 import TierSetup from '../TierSetup';
@@ -36,23 +39,17 @@ export default inject(
     class CrowdsaleSetup extends Component {
       constructor(props) {
         super(props);
-        const {
-          contractStore,
-          crowdsaleBlockListStore,
-          tierStore,
-          gasPriceStore
-        } = props;
+        const { contractStore, tierStore, gasPriceStore } = props;
 
         this.handleChange = this.handleChange.bind(this);
         this.updateWhitelistEnabled = this.updateWhitelistEnabled.bind(this);
         this.removeTier = this.removeTier.bind(this);
 
-        tierStore.emptyList();
-        crowdsaleBlockListStore.emptyList();
+        //tierStore.emptyList();
 
-        tierStore.setTierProperty('Tier 1', 'tier', 0);
-        tierStore.setTierProperty('off', 'updatable', 0);
-        tierStore.setTierProperty('no', 'whitelistEnabled', 0);
+        if (tierStore.tiers.length === 0) {
+          this.addCrowdsaleData(0);
+        }
         this.state = {
           addr: '',
           minCap: '0',
@@ -61,6 +58,7 @@ export default inject(
           isLoading: true
         };
       }
+
       updateTierStore = (event, property, index) => {
         const { tierStore } = this.props;
         const value = event.target.value;
@@ -69,9 +67,9 @@ export default inject(
       };
 
       updateWhitelistEnabled = e => {
-        this.props.tierStore.setGlobalMinCap('');
         this.updateTierStore(e, 'whitelistEnabled', 0);
       };
+
       componentDidMount() {
         const { tierStore, web3Store, gasPriceStore } = this.props;
         const { curAddress } = web3Store;
@@ -88,12 +86,29 @@ export default inject(
       }
 
       addCrowdsale() {
-        const { crowdsaleBlockListStore, tierStore } = this.props;
-        let num = crowdsaleBlockListStore.blockList.length + 1;
+        const { tierStore } = this.props;
+        let num = tierStore.tiers.length;
+
+        this.addCrowdsaleData(num);
+      }
+
+      removeTier(index) {
+        this.props.tierStore.removeTier(index);
+      }
+      addCrowdsaleData(num) {
+        const { tierStore } = this.props;
+        var startTime = defaultCompanyStartDate();
+
+        if (num !== 0) {
+          startTime = tierStore.tiers[num - 1].endTime;
+        }
+        var endTime = defaultCompanyEndDate(startTime);
         const newTier = {
           tier: 'Tier ' + (num + 1),
-          supply: 0,
-          rate: 0,
+          supply: 1,
+          rate: 1,
+          startTime: startTime,
+          endTime: endTime,
           updatable: 'off',
           whitelist: [],
           whitelistElements: []
@@ -108,35 +123,18 @@ export default inject(
 
         tierStore.addTier(newTier);
         tierStore.addTierValidations(newTierValidations);
-
-        this.addCrowdsaleBlock(num);
-      }
-      removeTier(index) {
-        this.props.crowdsaleBlockListStore.removeCrowdsaleItem(index);
-        this.props.tierStore.removeTier(index);
-      }
-      addCrowdsaleBlock(num) {
-        this.props.crowdsaleBlockListStore.addCrowdsaleItem(
-          <TierSetup
-            num={num}
-            key={num}
-            removable={true}
-            removeTier={this.removeTier}
-          />
-        );
       }
 
       handleChange(e) {
         this.setState({ [e.id]: e.value }, () => {});
+        if (e.id === 'minCap') {
+          this.props.tierStore.setGlobalMinCap(e.value);
+        }
       }
       render() {
         const state = this.state;
         const gasPriceStore = this.props.gasPriceStore;
-        const {
-          contractStore,
-          crowdsaleBlockListStore,
-          tierStore
-        } = this.props;
+        const { contractStore, tierStore } = this.props;
         return (
           <div>
             <Panel>
@@ -194,8 +192,22 @@ export default inject(
                 </form>
               </Panel.Body>
             </Panel>
-            <TierSetup key="0" num="0" />
-            <div>{crowdsaleBlockListStore.blockList}</div>
+            {this.props.tierStore.tiers.map((row, i) => {
+              if (i === 0) {
+                return (
+                  <TierSetup key={i} num={i} removeTier={this.removeTier} />
+                );
+              } else {
+                return (
+                  <TierSetup
+                    key={i}
+                    num={i}
+                    removable={true}
+                    removeTier={this.removeTier}
+                  />
+                );
+              }
+            })}
             <ButtonToolbar>
               <Button bsStyle="primary" onClick={() => this.addCrowdsale()}>
                 Add Tier

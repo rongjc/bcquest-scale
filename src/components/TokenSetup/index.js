@@ -21,7 +21,7 @@ export default inject(
         this.state = {
           name: props.tokenStore.name || '',
           ticker: props.tokenStore.ticker || '',
-          decimal: props.tokenStore.decimals || '',
+          decimals: props.tokenStore.decimals || '',
           reservedTokenStore: props.reservedTokenStore
         };
       }
@@ -69,7 +69,7 @@ export default inject(
               <RegexInput
                 id="decimals"
                 title="Decimals"
-                value={state.decimal}
+                value={state.decimals}
                 type="number"
                 regex="^([1-9]|1[0-9])$"
                 help="Refers to how divisible a token can be, from 0 (not at all divisible) to 18 (pretty much continuous)."
@@ -82,6 +82,7 @@ export default inject(
                 removeReservedToken={this.removeReservedToken}
               />
               <Button
+                id="add-button"
                 bsStyle="primary"
                 disabled={!props.tokenStore.isTokenValid}
               >

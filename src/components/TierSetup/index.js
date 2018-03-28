@@ -1,17 +1,9 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
-import moment from 'moment';
-import {
-  Panel,
-  FormGroup,
-  ControlLabel,
-  Radio,
-  ButtonToolbar,
-  Button,
-  Alert
-} from 'react-bootstrap';
+
+import { Panel, Button } from 'react-bootstrap';
 import { gweiToWei, weiToGwei } from '../../utils/utils';
-import { checkWeb3 } from '../../utils/blockchainHelpers';
+
 import RegexInput from '../RegexInput';
 import WhitelistInputBlock from '../WhitelistInputBlock';
 
@@ -37,7 +29,7 @@ export default inject(
         const num = parseInt(props.num, 10);
 
         this.state = {
-          name: tierStore.tiers[num].tier,
+          tier: tierStore.tiers[num].tier,
           startTime: tierStore.tiers[num].startTime,
           endTime: tierStore.tiers[num].endTime,
           rate: tierStore.tiers[num].rate,
@@ -62,7 +54,7 @@ export default inject(
         const num = parseInt(newProps.num, 10);
         const { tierStore, gasPriceStore } = newProps;
         this.setState({
-          name: tierStore.tiers[num].tier,
+          tier: tierStore.tiers[num].tier,
           startTime: tierStore.tiers[num].startTime,
           endTime: tierStore.tiers[num].endTime,
           rate: tierStore.tiers[num].rate,
@@ -85,9 +77,9 @@ export default inject(
               <Panel.Body>
                 <form>
                   <RegexInput
-                    id="name"
+                    id="tier"
                     title="Name"
-                    value={state.name}
+                    value={state.tier}
                     type="text"
                     regex="^[0-9a-fA-Z]*"
                     help="Name of a tier, e.g. PrePreCrowdsale, PreCrowdsale, Crowdsale with bonus A, Crowdsale with bonus B, etc. We simplified that and will increment a number after each tier."
@@ -98,7 +90,7 @@ export default inject(
                     title="START TIME"
                     value={state.startTime}
                     type="text"
-                    regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
+                    regex="^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d$"
                     help="
                     Date and time when the tier starts. Can't be in the past from the current moment."
                     onValueUpdate={this.handleChange}
@@ -108,7 +100,7 @@ export default inject(
                     title="END TIME"
                     value={state.endTime}
                     type="text"
-                    regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
+                    regex="^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d$"
                     help="
                     Date and time when the tier ends. Can be only in the future."
                     onValueUpdate={this.handleChange}

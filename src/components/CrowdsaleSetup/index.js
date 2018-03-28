@@ -13,7 +13,11 @@ import {
   defaultCompanyStartDate,
   defaultCompanyEndDate
 } from '../../utils/utils';
-import { checkWeb3 } from '../../utils/blockchainHelpers';
+import {
+  setExistingContractParams,
+  getNetworkVersion,
+  getNetWorkNameById
+} from '../../utils/blockchainHelpers';
 import RegexInput from '../RegexInput';
 import TierSetup from '../TierSetup';
 
@@ -25,7 +29,6 @@ export const VALIDATION_TYPES = {
 const { EMPTY, VALID, INVALID } = VALIDATION_TYPES;
 export default inject(
   'contractStore',
-  'crowdsaleBlockListStore',
   'pricingStrategyStore',
   'web3Store',
   'tierStore',
@@ -45,10 +48,11 @@ export default inject(
         this.updateWhitelistEnabled = this.updateWhitelistEnabled.bind(this);
         this.removeTier = this.removeTier.bind(this);
 
-        //tierStore.emptyList();
+        tierStore.emptyList();
 
         if (tierStore.tiers.length === 0) {
           this.addCrowdsaleData(0);
+          this.updateTierStore('no', 'whitelistEnabled', 0);
         }
         this.state = {
           addr: '',
@@ -57,17 +61,24 @@ export default inject(
           isError: false,
           isLoading: true
         };
+        if (contractStore.crowdsale.addr.length > 0) {
+          contractStore.setContractProperty('pricingStrategy', 'addr', []);
+          setExistingContractParams(
+            contractStore.abi,
+            contractStore.addr[0],
+            contractStore.setContractProperty
+          );
+        }
       }
 
-      updateTierStore = (event, property, index) => {
+      updateTierStore = (value, property, index) => {
         const { tierStore } = this.props;
-        const value = event.target.value;
         tierStore.setTierProperty(value, property, index);
         tierStore.validateTiers(property, index);
       };
 
       updateWhitelistEnabled = e => {
-        this.updateTierStore(e, 'whitelistEnabled', 0);
+        this.updateTierStore(e.target.value, 'whitelistEnabled', 0);
       };
 
       componentDidMount() {
@@ -78,9 +89,10 @@ export default inject(
 
         gasPriceStore
           .updateValues()
-          .then(() =>
-            this.setState({ gasPriceSelected: gasPriceStore.slow.id })
-          )
+          .then(() => {
+            this.setState({ gasPriceSelected: gasPriceStore.slow.id });
+            this.setGasPrice(gasPriceStore.slow);
+          })
           .catch(() => console.log('NO Gas'))
           .then(() => this.setState({ loading: false }));
       }
@@ -124,11 +136,18 @@ export default inject(
         tierStore.addTier(newTier);
         tierStore.addTierValidations(newTierValidations);
       }
-
+      setGasPrice({ id, price }) {
+        this.setState({
+          gasPriceSelected: id
+        });
+        this.props.generalStore.setGasPrice(price);
+      }
       handleChange(e) {
         this.setState({ [e.id]: e.value }, () => {});
         if (e.id === 'minCap') {
           this.props.tierStore.setGlobalMinCap(e.value);
+        } else if (e.id === 'addr') {
+          this.updateTierStore(e.value, 'walletAddress', 0);
         }
       }
       render() {
@@ -152,11 +171,29 @@ export default inject(
                   />
                   <FormGroup>
                     <ControlLabel>Gas Price:</ControlLabel>
-                    <Radio name="gas">{gasPriceStore.slowDescription}</Radio>
-                    <Radio name="gas">
+                    <Radio
+                      name="gas"
+                      onChange={() => this.setGasPrice(gasPriceStore.slow)}
+                      checked={state.gasPriceSelected === gasPriceStore.slow.id}
+                    >
+                      {gasPriceStore.slowDescription}
+                    </Radio>
+                    <Radio
+                      name="gas"
+                      onChange={() => this.setGasPrice(gasPriceStore.standard)}
+                      checked={
+                        state.gasPriceSelected === gasPriceStore.standard.id
+                      }
+                    >
                       {gasPriceStore.standardDescription}
                     </Radio>
-                    <Radio name="gas">{gasPriceStore.fastDescription}</Radio>
+                    <Radio
+                      name="gas"
+                      onChange={() => this.setGasPrice(gasPriceStore.fast)}
+                      checked={state.gasPriceSelected === gasPriceStore.fast.id}
+                    >
+                      {gasPriceStore.fastDescription}
+                    </Radio>
                   </FormGroup>
                   <RegexInput
                     id="min"

@@ -82,7 +82,6 @@ export default inject(
                 removeReservedToken={this.removeReservedToken}
               />
               <Button
-                id="add-button"
                 bsStyle="primary"
                 disabled={!props.tokenStore.isTokenValid}
               >

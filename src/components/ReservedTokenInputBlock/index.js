@@ -44,6 +44,7 @@ export default observer(
       this.setState({
         addr: '',
         dim: 'tokens',
+        isValid: false,
         value: ''
       });
     }
@@ -117,6 +118,7 @@ export default observer(
                     <td>
                       <Button
                         bsStyle="primary"
+                        id="add-button"
                         disabled={!this.state.isValid}
                         onClick={this.addReservedTokensItem}
                       >

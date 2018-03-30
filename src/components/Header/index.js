@@ -10,19 +10,10 @@ export default class Header extends Component {
             <b>A</b>LT
           </span>
           <span className="logo-lg">
-            <b>Admin</b>LTE
+            <b>BCQuest</b>
           </span>
         </a>
-        <nav className="navbar navbar-static-top">
-          <a
-            href="#"
-            className="sidebar-toggle"
-            data-toggle="push-menu"
-            role="button"
-          >
-            <span className="sr-only">Toggle navigation</span>
-          </a>
-        </nav>
+        <nav className="navbar navbar-static-top" />
       </header>
     );
   }

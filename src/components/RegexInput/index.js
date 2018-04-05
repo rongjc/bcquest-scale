@@ -49,12 +49,14 @@ export default observer(
         <div>
           <FormGroup controlId={state.id} validationState={state.error}>
             <ControlLabel>{props.title}</ControlLabel>
-            <FormControl
-              type={props.type}
-              onChange={this.handleChange}
-              value={state.val}
-              disabled={props.disabled}
-            />
+            <div className={props.className}>
+              <FormControl
+                type={props.type}
+                onChange={this.handleChange}
+                value={state.val}
+                disabled={props.disabled}
+              />
+            </div>
             <FormControl.Feedback />
             <HelpBlock>{props.help}</HelpBlock>
           </FormGroup>

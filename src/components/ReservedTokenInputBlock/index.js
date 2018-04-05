@@ -69,7 +69,7 @@ export default observer(
               <Panel.Title componentClass="h3">{props.title}</Panel.Title>
             </Panel.Heading>
             <Panel.Body>
-              <Table striped bordered condensed hover>
+              <Table striped responsive>
                 <thead>
                   <tr>
                     <th>ADDRESS</th>

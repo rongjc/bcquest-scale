@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 
-import { Panel, Button } from 'react-bootstrap';
+import { Panel, Button, Col } from 'react-bootstrap';
 import { gweiToWei, weiToGwei } from '../../utils/utils';
 
 import RegexInput from '../RegexInput';
@@ -85,6 +85,7 @@ export default inject(
                     help="Name of a tier, e.g. PrePreCrowdsale, PreCrowdsale, Crowdsale with bonus A, Crowdsale with bonus B, etc. We simplified that and will increment a number after each tier."
                     onValueUpdate={this.handleChange}
                   />
+
                   <RegexInput
                     id="startTime"
                     title="START TIME"
@@ -125,6 +126,7 @@ export default inject(
                     onValueUpdate={this.handleChange}
                   />
                 </form>
+
                 {tierStore.tiers[0].whitelistEnabled === 'yes' ? (
                   <WhitelistInputBlock
                     data={props.tierStore.tiers[num].whitelistElements}

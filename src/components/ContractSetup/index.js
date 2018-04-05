@@ -132,17 +132,30 @@ export default inject('contractStore', 'web3Store')(
             )}
             <Panel>
               <Panel.Body>
-                <form>
-                  <FormGroup>
-                    <ControlLabel>Choose your crowdsale type</ControlLabel>
-                    <Radio checked readOnly>
-                      Whitelist with Cap
-                    </Radio>
-                    <Button bsStyle="primary" disabled={isLoading}>
-                      {isLoading ? 'Loading template...' : 'Continue'}
-                    </Button>
-                  </FormGroup>
-                </form>
+                <div>
+                  <h3 class="box-header">Contract Setup</h3>
+                </div>
+                <div className="box-body">
+                  <div className="row">
+                    <div className="col-md-12">
+                      <form>
+                        <FormGroup>
+                          <ControlLabel>
+                            Choose your crowdsale type
+                          </ControlLabel>
+                          <Radio checked readOnly>
+                            Whitelist with Cap
+                          </Radio>
+                        </FormGroup>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="box-footer">
+                  <Button bsStyle="primary" disabled={isLoading}>
+                    {isLoading ? 'Loading template...' : 'Continue'}
+                  </Button>
+                </div>
               </Panel.Body>
             </Panel>
           </div>

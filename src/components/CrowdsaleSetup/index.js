@@ -157,100 +157,141 @@ export default inject(
         return (
           <div>
             <Panel>
-              <Panel.Heading>Global Setting</Panel.Heading>
               <Panel.Body>
-                <form>
-                  <RegexInput
-                    id="addr"
-                    title="Wallet Address"
-                    value={state.addr}
-                    type="text"
-                    regex="^(0x)?[0-9a-fA-Z]{40}$"
-                    help="Where the money goes after investors transactions. Immediately after each transaction. We recommend to setup a multisig wallet with hardware based signers."
-                    onValueUpdate={this.handleChange}
-                  />
-                  <FormGroup>
-                    <ControlLabel>Gas Price:</ControlLabel>
-                    <Radio
-                      name="gas"
-                      onChange={() => this.setGasPrice(gasPriceStore.slow)}
-                      checked={state.gasPriceSelected === gasPriceStore.slow.id}
+                <div>
+                  <h3 class="box-header">Crowdsale Setup</h3>
+                </div>
+                <div className="box-body">
+                  <div className="row">
+                    <div className="col-md-12">
+                      <Panel>
+                        <Panel.Heading>Global Setting</Panel.Heading>
+                        <Panel.Body>
+                          <form>
+                            <RegexInput
+                              id="addr"
+                              title="Wallet Address"
+                              value={state.addr}
+                              type="text"
+                              regex="^(0x)?[0-9a-fA-Z]{40}$"
+                              help="Where the money goes after investors transactions. Immediately after each transaction. We recommend to setup a multisig wallet with hardware based signers."
+                              onValueUpdate={this.handleChange}
+                            />
+                            <FormGroup>
+                              <ControlLabel>Gas Price:</ControlLabel>
+                              <Radio
+                                name="gas"
+                                onChange={() =>
+                                  this.setGasPrice(gasPriceStore.slow)
+                                }
+                                checked={
+                                  state.gasPriceSelected ===
+                                  gasPriceStore.slow.id
+                                }
+                              >
+                                {gasPriceStore.slowDescription}
+                              </Radio>
+                              <Radio
+                                name="gas"
+                                onChange={() =>
+                                  this.setGasPrice(gasPriceStore.standard)
+                                }
+                                checked={
+                                  state.gasPriceSelected ===
+                                  gasPriceStore.standard.id
+                                }
+                              >
+                                {gasPriceStore.standardDescription}
+                              </Radio>
+                              <Radio
+                                name="gas"
+                                onChange={() =>
+                                  this.setGasPrice(gasPriceStore.fast)
+                                }
+                                checked={
+                                  state.gasPriceSelected ===
+                                  gasPriceStore.fast.id
+                                }
+                              >
+                                {gasPriceStore.fastDescription}
+                              </Radio>
+                            </FormGroup>
+                            <RegexInput
+                              id="min"
+                              title="INVESTOR MIN CAP"
+                              value={state.minCap}
+                              type="number"
+                              disabled={
+                                tierStore.tiers[0].whitelistEnabled === 'yes'
+                              }
+                              regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
+                              help="Minimum amount tokens to buy. Not a minimal size of a transaction. If minCap is 1 and user bought 1 token in a previous transaction and buying 0.1 token it will allow him to buy."
+                              onValueUpdate={this.handleChange}
+                            />
+                            <FormGroup
+                              onChange={e => this.updateWhitelistEnabled(e)}
+                            >
+                              <ControlLabel>whitelisting:</ControlLabel>
+                              <Radio
+                                name="whitelisting"
+                                value="yes"
+                                checked={
+                                  this.props.tierStore.tiers[0]
+                                    .whitelistEnabled === 'yes'
+                                }
+                              >
+                                Yes
+                              </Radio>
+                              <Radio
+                                name="whitelisting"
+                                value="no"
+                                checked={
+                                  this.props.tierStore.tiers[0]
+                                    .whitelistEnabled === 'no'
+                                }
+                              >
+                                No
+                              </Radio>
+                            </FormGroup>
+                          </form>
+                        </Panel.Body>
+                      </Panel>
+                      {this.props.tierStore.tiers.map((row, i) => {
+                        if (i === 0) {
+                          return (
+                            <TierSetup
+                              key={i}
+                              num={i}
+                              removeTier={this.removeTier}
+                            />
+                          );
+                        } else {
+                          return (
+                            <TierSetup
+                              key={i}
+                              num={i}
+                              removable={true}
+                              removeTier={this.removeTier}
+                            />
+                          );
+                        }
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <div class="box-footer">
+                  <ButtonToolbar>
+                    <Button
+                      bsStyle="primary"
+                      onClick={() => this.addCrowdsale()}
                     >
-                      {gasPriceStore.slowDescription}
-                    </Radio>
-                    <Radio
-                      name="gas"
-                      onChange={() => this.setGasPrice(gasPriceStore.standard)}
-                      checked={
-                        state.gasPriceSelected === gasPriceStore.standard.id
-                      }
-                    >
-                      {gasPriceStore.standardDescription}
-                    </Radio>
-                    <Radio
-                      name="gas"
-                      onChange={() => this.setGasPrice(gasPriceStore.fast)}
-                      checked={state.gasPriceSelected === gasPriceStore.fast.id}
-                    >
-                      {gasPriceStore.fastDescription}
-                    </Radio>
-                  </FormGroup>
-                  <RegexInput
-                    id="min"
-                    title="INVESTOR MIN CAP"
-                    value={state.minCap}
-                    type="number"
-                    disabled={tierStore.tiers[0].whitelistEnabled === 'yes'}
-                    regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
-                    help="Minimum amount tokens to buy. Not a minimal size of a transaction. If minCap is 1 and user bought 1 token in a previous transaction and buying 0.1 token it will allow him to buy."
-                    onValueUpdate={this.handleChange}
-                  />
-                  <FormGroup onChange={e => this.updateWhitelistEnabled(e)}>
-                    <ControlLabel>whitelisting:</ControlLabel>
-                    <Radio
-                      name="whitelisting"
-                      value="yes"
-                      checked={
-                        this.props.tierStore.tiers[0].whitelistEnabled === 'yes'
-                      }
-                    >
-                      Yes
-                    </Radio>
-                    <Radio
-                      name="whitelisting"
-                      value="no"
-                      checked={
-                        this.props.tierStore.tiers[0].whitelistEnabled === 'no'
-                      }
-                    >
-                      No
-                    </Radio>
-                  </FormGroup>
-                </form>
+                      Add Tier
+                    </Button>
+                    <Button bsStyle="primary">Continue</Button>
+                  </ButtonToolbar>
+                </div>
               </Panel.Body>
             </Panel>
-            {this.props.tierStore.tiers.map((row, i) => {
-              if (i === 0) {
-                return (
-                  <TierSetup key={i} num={i} removeTier={this.removeTier} />
-                );
-              } else {
-                return (
-                  <TierSetup
-                    key={i}
-                    num={i}
-                    removable={true}
-                    removeTier={this.removeTier}
-                  />
-                );
-              }
-            })}
-            <ButtonToolbar>
-              <Button bsStyle="primary" onClick={() => this.addCrowdsale()}>
-                Add Tier
-              </Button>
-              <Button bsStyle="primary">Continue</Button>
-            </ButtonToolbar>
           </div>
         );
       }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 import RegexInput from '../RegexInput';
 import ReservedTokenInputBlock from '../ReservedTokenInputBlock';
-import { Button } from 'react-bootstrap';
+import { Button, Panel } from 'react-bootstrap';
 
 export default inject(
   'tokenStore',
@@ -47,47 +47,64 @@ export default inject(
         const props = this.props;
         return (
           <div>
-            <form>
-              <RegexInput
-                id="name"
-                title="Name"
-                value={state.name}
-                type="text"
-                regex="^.*\S.*"
-                help="The name of your token. Will be used by Etherscan and other token browsers. Be afraid of trademarks."
-                onValueUpdate={this.handleChange}
-              />
-              <RegexInput
-                id="ticker"
-                title="Ticker"
-                value={state.ticker}
-                type="text"
-                regex="^.{5}$"
-                help="The five letter ticker for your token. There are 11,881,376 combinations for 26 english letters. Be hurry."
-                onValueUpdate={this.handleChange}
-              />
-              <RegexInput
-                id="decimals"
-                title="Decimals"
-                value={state.decimals}
-                type="number"
-                regex="^([1-9]|1[0-9])$"
-                help="Refers to how divisible a token can be, from 0 (not at all divisible) to 18 (pretty much continuous)."
-                onValueUpdate={this.handleChange}
-              />
-              <ReservedTokenInputBlock
-                title="Reserved Token Setup"
-                data={state.reservedTokenStore.tokens}
-                addReservedTokensItem={this.addReservedTokensItem}
-                removeReservedToken={this.removeReservedToken}
-              />
-              <Button
-                bsStyle="primary"
-                disabled={!props.tokenStore.isTokenValid}
-              >
-                {!props.tokenStore.isTokenValid ? 'Invalid' : 'Continue'}
-              </Button>
-            </form>
+            <Panel>
+              <Panel.Body>
+                <div>
+                  <h3 class="box-header">Token Setup</h3>
+                </div>
+                <div className="box-body">
+                  <div className="row">
+                    <div className="col-md-12">
+                      <form>
+                        <RegexInput
+                          id="name"
+                          title="Name"
+                          value={state.name}
+                          type="text"
+                          regex="^.*\S.*"
+                          help="The name of your token. Will be used by Etherscan and other token browsers. Be afraid of trademarks."
+                          onValueUpdate={this.handleChange}
+                        />
+                        <RegexInput
+                          id="ticker"
+                          title="Ticker"
+                          value={state.ticker}
+                          type="text"
+                          regex="^.{5}$"
+                          help="The five letter ticker for your token. There are 11,881,376 combinations for 26 english letters. Be hurry."
+                          onValueUpdate={this.handleChange}
+                        />
+                        <RegexInput
+                          id="decimals"
+                          title="Decimals"
+                          value={state.decimals}
+                          type="number"
+                          regex="^([1-9]|1[0-9])$"
+                          help="Refers to how divisible a token can be, from 0 (not at all divisible) to 18 (pretty much continuous)."
+                          onValueUpdate={this.handleChange}
+                        />
+                        <ReservedTokenInputBlock
+                          title="Reserved Token Setup"
+                          data={state.reservedTokenStore.tokens}
+                          addReservedTokensItem={this.addReservedTokensItem}
+                          removeReservedToken={this.removeReservedToken}
+                        />
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="box-footer">
+                  <Button
+                    id="add-button"
+                    className="pull-centr"
+                    bsStyle="primary"
+                    disabled={!props.tokenStore.isTokenValid}
+                  >
+                    {!props.tokenStore.isTokenValid ? 'Invalid' : 'Continue'}
+                  </Button>
+                </div>
+              </Panel.Body>
+            </Panel>
           </div>
         );
       }

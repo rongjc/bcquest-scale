@@ -99,6 +99,7 @@ export default inject(
                     className="pull-centr"
                     bsStyle="primary"
                     disabled={!props.tokenStore.isTokenValid}
+                    href={'crowdsalestep3'}
                   >
                     {!props.tokenStore.isTokenValid ? 'Invalid' : 'Continue'}
                   </Button>

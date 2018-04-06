@@ -153,7 +153,7 @@ export default inject(
       render() {
         const state = this.state;
         const gasPriceStore = this.props.gasPriceStore;
-        const { contractStore, tierStore } = this.props;
+        const props = this.props;
         return (
           <div>
             <Panel>
@@ -222,7 +222,8 @@ export default inject(
                               value={state.minCap}
                               type="number"
                               disabled={
-                                tierStore.tiers[0].whitelistEnabled === 'yes'
+                                props.tierStore.tiers[0].whitelistEnabled ===
+                                'yes'
                               }
                               regex="^(([0-9]*)|(([0-9]*)\.([0-9]*)))$"
                               help="Minimum amount tokens to buy. Not a minimal size of a transaction. If minCap is 1 and user bought 1 token in a previous transaction and buying 0.1 token it will allow him to buy."
@@ -236,8 +237,8 @@ export default inject(
                                 name="whitelisting"
                                 value="yes"
                                 checked={
-                                  this.props.tierStore.tiers[0]
-                                    .whitelistEnabled === 'yes'
+                                  props.tierStore.tiers[0].whitelistEnabled ===
+                                  'yes'
                                 }
                               >
                                 Yes
@@ -246,8 +247,8 @@ export default inject(
                                 name="whitelisting"
                                 value="no"
                                 checked={
-                                  this.props.tierStore.tiers[0]
-                                    .whitelistEnabled === 'no'
+                                  props.tierStore.tiers[0].whitelistEnabled ===
+                                  'no'
                                 }
                               >
                                 No
@@ -256,7 +257,7 @@ export default inject(
                           </form>
                         </Panel.Body>
                       </Panel>
-                      {this.props.tierStore.tiers.map((row, i) => {
+                      {props.tierStore.tiers.map((row, i) => {
                         if (i === 0) {
                           return (
                             <TierSetup
@@ -287,7 +288,9 @@ export default inject(
                     >
                       Add Tier
                     </Button>
-                    <Button bsStyle="primary">Continue</Button>
+                    <Button bsStyle="primary" href={'crowdsalestep4'}>
+                      Continue
+                    </Button>
                   </ButtonToolbar>
                 </div>
               </Panel.Body>

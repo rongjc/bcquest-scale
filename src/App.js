@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import logo from './logo.svg';
 import './App.css';
 import { Provider } from 'mobx-react';
-
+import createBrowserHistory from 'history/createBrowserHistory';
 import Header from './components/Header';
 import SideNav, { Nav, NavIcon, NavText } from 'react-sidenav';
 import SideBar from './components/SideBar';
@@ -11,14 +11,14 @@ import SideBar from './components/SideBar';
 import ContractSetup from './components/ContractSetup';
 import TokenSetup from './components/TokenSetup';
 import CrowdsaleSetup from './components/CrowdsaleSetup';
-
 // read ../../stores/index.js for configuration
 import * as stores from './stores';
 
+const browserHistory = createBrowserHistory();
 class App extends Component {
   render() {
     return (
-      <Provider {...stores}>
+      <Provider {...stores} history={browserHistory}>
         <Router>
           <div className="App">
             <Header />
@@ -28,12 +28,21 @@ class App extends Component {
                 <div className="row">
                   <div className="box-body">
                     <div className="row">
-                      <div className="col-md-8">
-                        <p className="text-left">
-                          <Route path="/contract" component={ContractSetup} />
-                          <Route path="/token" component={TokenSetup} />
-                          <Route path="/crowdsale" component={CrowdsaleSetup} />
-                        </p>
+                      <div className="col-md-8 text-left">
+                        <Switch>
+                          <Route
+                            path="/crowdsalestep1"
+                            component={ContractSetup}
+                          />
+                          <Route
+                            path="/crowdsalestep2"
+                            component={TokenSetup}
+                          />
+                          <Route
+                            path="/crowdsalestep3"
+                            component={CrowdsaleSetup}
+                          />
+                        </Switch>
                       </div>
                     </div>
                   </div>

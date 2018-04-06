@@ -152,7 +152,11 @@ export default inject('contractStore', 'web3Store')(
                   </div>
                 </div>
                 <div class="box-footer">
-                  <Button bsStyle="primary" disabled={isLoading}>
+                  <Button
+                    bsStyle="primary"
+                    disabled={isLoading}
+                    href={'crowdsalestep2'}
+                  >
                     {isLoading ? 'Loading template...' : 'Continue'}
                   </Button>
                 </div>
@@ -164,5 +168,3 @@ export default inject('contractStore', 'web3Store')(
     }
   )
 );
-
-// inject("contractStore", "web3Store")(observer(CrowdSalePage));

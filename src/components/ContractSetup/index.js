@@ -20,7 +20,9 @@ export default inject('contractStore', 'web3Store')(
       constructor(props) {
         super(props);
         this.render = this.render.bind(this);
-
+        this.props.contractStore.setContractType(
+          CONTRACT_TYPES.whitelistwithcap
+        );
         this.state = {
           contractsDownloaded: DOWNLOAD_STATUS.PENDING,
           isError: false,

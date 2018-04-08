@@ -10,10 +10,10 @@ export default class SideBar extends Component {
           <ul className="sidebar-menu" data-widget="tree">
             <li className="header">Crowdsale</li>
             <li>
-              <a href="pages/widgets.html">
+              <a href="/crowdsalestep1">
                 <i className="fa fa-th" /> <span>New</span>
               </a>
-              <a href="pages/widgets.html">
+              <a href="/manage">
                 <i className="fa fa-th" /> <span>Completed</span>
               </a>
             </li>

@@ -70,7 +70,22 @@ export default inject(
           );
         }
       }
+      beforeNavigate = e => {
+        const { tierStore, gasPriceStore } = this.props;
+        const gasPriceIsValid =
+          gasPriceStore.custom.id !== this.state.gasPriceSelected ||
+          this.state.validation.gasPrice.valid === VALID;
+        const isMinCapValid = tierStore.globalMinCap <= tierStore.maxSupply;
+        const { reservedTokenStore, deploymentStore } = this.props;
+        const tiersCount = tierStore.tiers.length;
+        const reservedCount = reservedTokenStore.tokens.length;
+        const hasWhitelist = tierStore.tiers[0].whitelistEnabled === 'yes';
+        e.preventDefault();
+        e.stopPropagation();
 
+        deploymentStore.initialize(!!reservedCount, hasWhitelist, tiersCount);
+        this.props.history.push('/crowdsalestep4');
+      };
       updateTierStore = (value, property, index) => {
         const { tierStore } = this.props;
         tierStore.setTierProperty(value, property, index);
@@ -288,7 +303,11 @@ export default inject(
                     >
                       Add Tier
                     </Button>
-                    <Button bsStyle="primary" href={'crowdsalestep4'}>
+                    <Button
+                      bsStyle="primary"
+                      href={'crowdsalestep4'}
+                      onClick={e => this.beforeNavigate(e)}
+                    >
                       Continue
                     </Button>
                   </ButtonToolbar>

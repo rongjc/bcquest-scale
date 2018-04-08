@@ -11,6 +11,8 @@ import SideBar from './components/SideBar';
 import ContractSetup from './components/ContractSetup';
 import TokenSetup from './components/TokenSetup';
 import CrowdsaleSetup from './components/CrowdsaleSetup';
+import DeploymentSetup from './components/Deployment';
+import Manage from './components/Manage';
 // read ../../stores/index.js for configuration
 import * as stores from './stores';
 
@@ -42,6 +44,11 @@ class App extends Component {
                             path="/crowdsalestep3"
                             component={CrowdsaleSetup}
                           />
+                          <Route
+                            path="/crowdsalestep4"
+                            component={DeploymentSetup}
+                          />
+                          <Route path="/manage" component={Manage} />
                         </Switch>
                       </div>
                     </div>

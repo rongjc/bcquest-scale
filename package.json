@@ -25,6 +25,7 @@
     "react-scripts": "1.1.1",
     "react-sidenav": "^2.1.2",
     "store2": "^2.7.0",
+    "sweetalert2": "^7.18.0",
     "web3": "^1.0.0-beta.33",
     "web3-utils": "^1.0.0-beta.33"
   },

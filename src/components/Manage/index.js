@@ -70,7 +70,10 @@ export default inject('crowdsaleStore')(
                     <tr key={i}>
                       <td>{row}</td>
                       <td>
-                        <Button bsStyle="primary" href="/">
+                        <Button
+                          bsStyle="primary"
+                          href={'/crowdsaledetail/' + row}
+                        >
                           Manage
                         </Button>
                       </td>

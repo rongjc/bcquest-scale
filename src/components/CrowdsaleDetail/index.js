@@ -59,7 +59,11 @@ export default inject(
       }
 
       render() {
-        return <section className="manage">test</section>;
+        return (
+          <section className="manage">
+            {this.props.match.params.crowdsaleAddress}
+          </section>
+        );
       }
     }
   )

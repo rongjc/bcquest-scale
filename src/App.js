@@ -13,6 +13,7 @@ import TokenSetup from './components/TokenSetup';
 import CrowdsaleSetup from './components/CrowdsaleSetup';
 import DeploymentSetup from './components/Deployment';
 import Manage from './components/Manage';
+import CrowdsaleDetail from './components/CrowdsaleDetail';
 
 // read ../../stores/index.js for configuration
 import * as stores from './stores';
@@ -52,7 +53,7 @@ class App extends Component {
                           <Route path="/manage" component={Manage} />
                           <Route
                             path="/crowdsaledetail/:crowdsaleAddress"
-                            component={Manage}
+                            component={CrowdsaleDetail}
                           />
                         </Switch>
                       </div>

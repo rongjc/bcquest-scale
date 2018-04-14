@@ -72,7 +72,7 @@ export default inject('crowdsaleStore')(
                       <td>
                         <Button
                           bsStyle="primary"
-                          href={'/crowdsaledetail/' + row}
+                          href={'/crowdsale/detail/' + row}
                         >
                           Manage
                         </Button>

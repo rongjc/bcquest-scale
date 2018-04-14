@@ -14,7 +14,7 @@ import CrowdsaleSetup from './components/CrowdsaleSetup';
 import DeploymentSetup from './components/Deployment';
 import Manage from './components/Manage';
 import CrowdsaleDetail from './components/CrowdsaleDetail';
-
+import Invest from './components/Invest';
 // read ../../stores/index.js for configuration
 import * as stores from './stores';
 
@@ -26,6 +26,7 @@ class App extends Component {
         <Router>
           <div className="App">
             <Header />
+
             <SideBar />
             <div className="content-wrapper">
               <section className="content-header">
@@ -35,26 +36,27 @@ class App extends Component {
                       <div className="col-md-8 text-left">
                         <Switch>
                           <Route
-                            path="/crowdsalestep1"
+                            path="/crowdsale/step1"
                             component={ContractSetup}
                           />
                           <Route
-                            path="/crowdsalestep2"
+                            path="/crowdsale/step2"
                             component={TokenSetup}
                           />
                           <Route
-                            path="/crowdsalestep3"
+                            path="/crowdsale/step3"
                             component={CrowdsaleSetup}
                           />
                           <Route
-                            path="/crowdsalestep4"
+                            path="/crowdsale/step4"
                             component={DeploymentSetup}
                           />
-                          <Route path="/manage" component={Manage} />
+                          <Route path="/crowdsale/manage" component={Manage} />
                           <Route
-                            path="/crowdsaledetail/:crowdsaleAddress"
+                            path="/crowdsale/detail/:crowdsaleAddress"
                             component={CrowdsaleDetail}
                           />
+                          <Route path="/crowdsale/invest" component={Invest} />
                         </Switch>
                       </div>
                     </div>
